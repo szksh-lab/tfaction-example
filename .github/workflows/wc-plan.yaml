@@ -24,7 +24,6 @@ jobs:
     name: "plan (${{matrix.target.target}})"
     runs-on: ${{matrix.target.runs_on}}
     permissions:
-      id-token: write # For OIDC
       contents: read # To checkout private repositories
     env:
       TFACTION_TARGET: ${{matrix.target.target}}
@@ -65,7 +64,6 @@ jobs:
         env:
           AQUA_GITHUB_TOKEN: ${{steps.aqua_installer_token.outputs.token}}
 
-
       # - uses: suzuki-shunsuke/tfaction/export-secrets@v1.12.0
       #   with:
       #     # If this action doesn't export secrets as you expect, please check if secrets are passed to this action properly.
@@ -75,30 +73,6 @@ jobs:
       #     # - https://docs.github.com/en/actions/using-workflows/reusing-workflows#passing-inputs-and-secrets-to-a-reusable-workflow
       #     # - https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#jobsjob_idsecrets
       #     secrets: ${{secrets.secrets}}
-      - name: Generate token to download private Terraform Modules
-        # CHECK: You can remove this step if you don't use private modules
-        id: gh_setup_token
-        uses: tibdex/github-app-token@3beb63f4bd073e61482598c45c71c1019b59b73a # v2.1.0
-        with:
-          app_id: ${{ secrets.gh_app_id }}
-          private_key: ${{ secrets.gh_app_private_key }}
-          # If you use private registries, contents:read is required
-          permissions: >-
-            {
-              "contents": "read"
-            }
-          # CHECK: Private repositories hosting private modules. Please fix this properly.
-          repositories: >-
-            [
-              "${{github.event.repository.name}}"
-            ]
-
-      - name: Set up git to checkout private Terraform Modules
-        run: gh auth setup-git
-        # CHECK: This is required to download private modules in `terraform init`
-        # You can remove this step if you don't use private modules
-        env:
-          GITHUB_TOKEN: ${{steps.gh_setup_token.outputs.token}}
 
       - name: Generate token
         id: generate_token
@@ -180,8 +154,6 @@ jobs:
           # CHECK: Please modify the provider list.
           TFPROVIDERCHECK_CONFIG_BODY: |
             providers:
-              - name: registry.terraform.io/hashicorp/aws
-              - name: registry.terraform.io/hashicorp/google
               - name: registry.terraform.io/hashicorp/null
               - name: registry.terraform.io/hashicorp/tls
               - name: registry.terraform.io/integrations/github
