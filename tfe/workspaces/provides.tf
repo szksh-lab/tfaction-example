@@ -1,3 +1,3 @@
 provider "tfe" {
-  organization = "suzuki-shunsuke"
+  organization = "szksh-lab"
 }

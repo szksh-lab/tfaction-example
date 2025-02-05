@@ -9,5 +9,5 @@ terraform {
 }
 
 provider "github" {
-  owner = "suzuki-shunsuke"
+  owner = "szksh-lab"
 }

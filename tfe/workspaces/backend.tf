@@ -1,9 +1,9 @@
 terraform {
   cloud {
-    organization = "suzuki-shunsuke"
+    organization = "szksh-lab"
 
     workspaces {
-      name = "tfe_workspaces"
+      name = "tfaction-example"
     }
   }
 }
